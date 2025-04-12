@@ -9,7 +9,8 @@ class CharacterListScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MultiBlocProvider(providers: [], child: _MyWidgetView());
+    return _MyWidgetView();
+    // return MultiBlocProvider(providers: [], child: _MyWidgetView());
   }
 }
 
@@ -31,11 +32,13 @@ class _MyWidgetViewState extends State<_MyWidgetView> {
       body: RefreshIndicator(
         child: Column(
           children: [
-            ListView.builder(
-              itemBuilder: (context, index) {
-                return CharacterCard();
-              },
-              itemCount: 10,
+            Expanded(
+              child: ListView.builder(
+                itemBuilder: (context, index) {
+                  return CharacterCard();
+                },
+                itemCount: 10,
+              ),
             ),
           ],
         ),
