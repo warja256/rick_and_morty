@@ -10,6 +10,7 @@ import 'package:rick_and_morty/features/favourite/bloc/favourite_bloc.dart';
 import 'package:rick_and_morty/features/favourite/bloc/favourite_event.dart';
 import 'package:rick_and_morty/repositories/abstract_character_repository.dart';
 import 'package:rick_and_morty/repositories/character_repository.dart';
+import 'package:rick_and_morty/repositories/favourite_repository.dart';
 import 'package:rick_and_morty/repositories/models/character.dart';
 import 'package:rick_and_morty/rick_and_morty_app.dart';
 import 'package:talker_bloc_logger/talker_bloc_logger_observer.dart';
@@ -45,10 +46,13 @@ void main() {
     await Hive.initFlutter();
     Hive.registerAdapter(CharacterAdapter());
 
-    final characterNameBox = await Hive.openBox<Character>(rickAndMortyBoxName);
+    final favouritesBox = await Hive.openBox<Character>('favourites_box');
+    GetIt.I.registerSingleton<FavouriteRepository>(
+      FavouriteRepository(favouritesBox),
+    );
 
     GetIt.I.registerLazySingleton<AbstractCharacterRepository>(
-      () => CharacterRepository(dio: dio, rickAndMortyBox: characterNameBox),
+      () => CharacterRepository(dio: dio, rickAndMortyBox: favouritesBox),
     );
 
     FlutterError.onError =
