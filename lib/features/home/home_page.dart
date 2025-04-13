@@ -18,14 +18,21 @@ class _HomePageState extends State<HomePage> {
       bottomNavigationBuilder: (__, tabsRouter) {
         return SafeArea(
           bottom: false,
-          child: Container(
-            padding: EdgeInsets.only(top: 10),
-            height: 102,
+          child: Material(
+            elevation: 12,
+            shadowColor: Colors.blueGrey,
             child: BottomNavigationBar(
+              currentIndex: tabsRouter.activeIndex,
               onTap: tabsRouter.setActiveIndex,
-              items: [
-                BottomNavigationBarItem(icon: Icon(Icons.home), label: ''),
-                BottomNavigationBarItem(icon: Icon(Icons.favorite), label: ''),
+              items: const [
+                BottomNavigationBarItem(
+                  icon: Icon(Icons.home, size: 30),
+                  label: '',
+                ),
+                BottomNavigationBarItem(
+                  icon: Icon(Icons.favorite, size: 30),
+                  label: '',
+                ),
               ],
             ),
           ),

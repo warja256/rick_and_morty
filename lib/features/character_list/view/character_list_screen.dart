@@ -8,6 +8,9 @@ import 'package:rick_and_morty/features/character_list/bloc/character_list_bloc.
 import 'package:rick_and_morty/features/character_list/bloc/character_list_event.dart';
 import 'package:rick_and_morty/features/character_list/bloc/character_list_state.dart';
 import 'package:rick_and_morty/features/character_list/widgets/character_card.dart';
+import 'package:rick_and_morty/features/favourite/bloc/favourite_bloc.dart';
+import 'package:rick_and_morty/features/favourite/bloc/favourite_event.dart';
+import 'package:rick_and_morty/features/favourite/bloc/favourite_state.dart';
 import 'package:rick_and_morty/repositories/abstract_character_repository.dart';
 import 'package:rick_and_morty/repositories/models/character.dart';
 
@@ -40,9 +43,11 @@ class _MyWidgetViewState extends State<_MyWidgetView> {
     final _characterListBloc = context.read<CharacterListBloc>();
 
     return Scaffold(
-      appBar: AppBar(title: Text('Rick and Morty'), actions: [
-
-        ],
+      appBar: AppBar(
+        title: Text('Rick and Morty'),
+        actions: [],
+        shadowColor: Colors.blueGrey,
+        elevation: 3,
       ),
       body: RefreshIndicator(
         child: BlocBuilder<CharacterListBloc, CharacterListState>(
@@ -57,7 +62,27 @@ class _MyWidgetViewState extends State<_MyWidgetView> {
                           itemCount: characters.length,
                           itemBuilder: (context, index) {
                             final character = characters[index];
-                            return CharacterCard(character: character);
+                            return CharacterCard(
+                              character: character,
+                              onFavoriteToggle: () {
+                                final isFavorite =
+                                    context.read<FavBloc>().state
+                                        is FavListLoaded &&
+                                    (context.read<FavBloc>().state
+                                            as FavListLoaded)
+                                        .favCharacterList
+                                        .contains(character);
+                                if (isFavorite) {
+                                  context.read<FavBloc>().add(
+                                    RemoveFromFav(character: character),
+                                  );
+                                } else {
+                                  context.read<FavBloc>().add(
+                                    AddToFav(character: character),
+                                  );
+                                }
+                              },
+                            );
                           },
                         ),
               );

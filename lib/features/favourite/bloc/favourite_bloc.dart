@@ -36,7 +36,7 @@ class FavBloc extends Bloc<FavEvent, FavState> {
     });
 
     on<RemoveFromFav>((event, emit) {
-      if (!_favCharacterList.contains(event.character)) {
+      if (_favCharacterList.contains(event.character)) {
         _favCharacterList.remove(event.character);
         GetIt.I<Talker>().debug(
           'Персонаж удалён из избранное: ${event.character.name}',

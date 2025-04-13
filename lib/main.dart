@@ -6,6 +6,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get_it/get_it.dart';
 import 'package:hive/hive.dart';
 import 'package:hive_flutter/hive_flutter.dart';
+import 'package:rick_and_morty/features/favourite/bloc/favourite_bloc.dart';
+import 'package:rick_and_morty/features/favourite/bloc/favourite_event.dart';
 import 'package:rick_and_morty/repositories/abstract_character_repository.dart';
 import 'package:rick_and_morty/repositories/character_repository.dart';
 import 'package:rick_and_morty/repositories/models/character.dart';
@@ -52,6 +54,11 @@ void main() {
 
     FlutterError.onError =
         (details) => GetIt.I<Talker>().handle(details.exception, details.stack);
-    runApp(RickAndMortyApp());
+    runApp(
+      BlocProvider(
+        create: (context) => FavBloc()..add(LoadFavList(completer: null)),
+        child: RickAndMortyApp(),
+      ),
+    );
   }, (e, st) => GetIt.I<Talker>().handle(e, st));
 }
