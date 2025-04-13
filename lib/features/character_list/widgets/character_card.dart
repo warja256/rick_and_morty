@@ -73,22 +73,75 @@ class CharacterCard extends StatelessWidget {
                         Positioned(
                           left: 0,
                           bottom: 0,
-                          child: IconButton(
-                            onPressed: () {
-                              final favBloc = context.read<FavBloc>();
-                              if (isFavorite) {
-                                favBloc.add(
-                                  RemoveFromFav(character: character),
-                                );
-                              } else {
-                                favBloc.add(AddToFav(character: character));
-                              }
-                              onFavoriteToggle();
+                          child: AnimatedSwitcher(
+                            duration: Duration(milliseconds: 300),
+                            transitionBuilder: (
+                              Widget child,
+                              Animation<double> animation,
+                            ) {
+                              return ScaleTransition(
+                                scale: animation,
+                                child: FadeTransition(
+                                  opacity: animation,
+                                  child: child,
+                                ),
+                              );
                             },
-                            icon: Icon(
-                              isFavorite ? Icons.star : Icons.star_border,
-                              color: isFavorite ? Colors.green : Colors.grey,
-                              size: 34,
+                            child: GestureDetector(
+                              onTap: () {
+                                final favBloc = context.read<FavBloc>();
+                                if (isFavorite) {
+                                  favBloc.add(
+                                    RemoveFromFav(character: character),
+                                  );
+                                } else {
+                                  favBloc.add(AddToFav(character: character));
+                                }
+                                onFavoriteToggle();
+                              },
+                              child: Row(
+                                children: [
+                                  IconButton(
+                                    key: ValueKey<bool>(isFavorite),
+                                    onPressed: () {
+                                      final favBloc = context.read<FavBloc>();
+                                      if (isFavorite) {
+                                        favBloc.add(
+                                          RemoveFromFav(character: character),
+                                        );
+                                      } else {
+                                        favBloc.add(
+                                          AddToFav(character: character),
+                                        );
+                                      }
+                                      onFavoriteToggle();
+                                    },
+                                    icon: Icon(
+                                      isFavorite
+                                          ? Icons.star
+                                          : Icons.star_border,
+                                      color:
+                                          isFavorite
+                                              ? Colors.green
+                                              : Colors.grey,
+                                      size: 34,
+                                    ),
+                                  ),
+                                  Text(
+                                    'Favourite',
+                                    style: TextStyle(
+                                      color:
+                                          isFavorite
+                                              ? Colors.green
+                                              : Colors.grey,
+                                      fontWeight:
+                                          isFavorite
+                                              ? FontWeight.bold
+                                              : FontWeight.normal,
+                                    ),
+                                  ),
+                                ],
+                              ),
                             ),
                           ),
                         ),
