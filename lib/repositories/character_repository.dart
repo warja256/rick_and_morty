@@ -17,7 +17,7 @@ class CharacterRepository extends AbstractCharacterRepository {
   Future<List<Character>> fetchCharacterListFromApi({int page = 1}) async {
     try {
       final response = await dio.get(
-        '${baseUrl}character',
+        '${baseUrl}character/',
         queryParameters: {'page': page},
       );
 
@@ -34,9 +34,9 @@ class CharacterRepository extends AbstractCharacterRepository {
   }
 
   @override
-  Future<List<Character>> getCharacterList() async {
+  Future<List<Character>> getCharacterList({int page = 1}) async {
     try {
-      final characterList = await fetchCharacterListFromApi();
+      final characterList = await fetchCharacterListFromApi(page: page);
 
       final charactersMap = {for (var e in characterList) e.id: e};
       await rickAndMortyBox.putAll(charactersMap);

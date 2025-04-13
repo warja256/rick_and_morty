@@ -25,7 +25,6 @@ void main() {
     WidgetsFlutterBinding.ensureInitialized();
 
     final talker = TalkerFlutter.init();
-
     GetIt.I.registerSingleton(talker);
     GetIt.I<Talker>().debug('Talker started...');
 
@@ -54,6 +53,8 @@ void main() {
 
     FlutterError.onError =
         (details) => GetIt.I<Talker>().handle(details.exception, details.stack);
+
+    // Now run the app after all async setup is complete
     runApp(
       BlocProvider(
         create: (context) => FavBloc()..add(LoadFavList(completer: null)),

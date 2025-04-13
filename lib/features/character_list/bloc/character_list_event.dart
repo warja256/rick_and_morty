@@ -13,3 +13,5 @@ class LoadCharacterList extends CharacterListEvent {
   final Completer? completer;
   const LoadCharacterList({this.completer});
 }
+
+class LoadMoreCharacters extends CharacterListEvent {}

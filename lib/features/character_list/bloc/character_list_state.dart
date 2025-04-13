@@ -5,7 +5,7 @@ abstract class CharacterListState extends Equatable {
   const CharacterListState();
 
   @override
-  List<Object?> get props => [];
+  List<Object> get props => [];
 }
 
 class CharacterListInitial extends CharacterListState {}
@@ -14,17 +14,45 @@ class CharacterListLoading extends CharacterListState {}
 
 class CharacterListLoaded extends CharacterListState {
   final List<Character> characters;
+  final int currentPage;
+  final bool isLoadingMore;
+  final bool hasNextPage;
 
-  CharacterListLoaded({required this.characters});
+  const CharacterListLoaded({
+    required this.characters,
+    required this.currentPage,
+    required this.isLoadingMore,
+    required this.hasNextPage,
+  });
+
+  CharacterListLoaded copyWith({
+    List<Character>? characters,
+    int? currentPage,
+    bool? isLoadingMore,
+    bool? hasNextPage,
+  }) {
+    return CharacterListLoaded(
+      characters: characters ?? this.characters,
+      currentPage: currentPage ?? this.currentPage,
+      isLoadingMore: isLoadingMore ?? this.isLoadingMore,
+      hasNextPage: hasNextPage ?? this.hasNextPage,
+    );
+  }
 
   @override
-  List<Object?> get props => [characters];
+  List<Object> get props => [
+    characters,
+    currentPage,
+    isLoadingMore,
+    hasNextPage,
+  ];
 }
 
-class CharacterListLoadingFailure extends CharacterListState {
-  final Object exception;
-  const CharacterListLoadingFailure({required this.exception});
+class CharacterListError extends CharacterListState {
+  final String message;
+
+  const CharacterListError(this.message);
 
   @override
-  List<Object?> get props => [exception];
+  List<Object> get props => [message];
 }

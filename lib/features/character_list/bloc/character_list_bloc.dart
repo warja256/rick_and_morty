@@ -1,39 +1,64 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:get_it/get_it.dart';
 import 'package:rick_and_morty/features/character_list/bloc/character_list_event.dart';
 import 'package:rick_and_morty/features/character_list/bloc/character_list_state.dart';
 import 'package:rick_and_morty/repositories/abstract_character_repository.dart';
-import 'package:rick_and_morty/repositories/models/character.dart';
-import 'package:talker_flutter/talker_flutter.dart';
+import 'package:rick_and_morty/repositories/character_repository.dart';
+import 'package:bloc/bloc.dart';
 
 class CharacterListBloc extends Bloc<CharacterListEvent, CharacterListState> {
-  CharacterListBloc(this.characterRepository) : super(CharacterListInitial()) {
-    on<LoadCharacterList>((event, emit) async {
-      try {
-        if (state is CharacterListLoaded) {
-          emit(CharacterListLoading());
-        }
-        List<Character> characters =
-            await characterRepository.getCharacterList();
-        print(
-          "✅ Загружено: ${characters.length} персонажей, данные: $characters",
-        );
-        emit(CharacterListLoaded(characters: characters));
-      } catch (e, st) {
-        print("❌ Ошибка при загрузке персонажей: $e\n$st");
-        emit(CharacterListLoadingFailure(exception: e));
-        GetIt.I<Talker>().handle(e, st);
-      } finally {
-        event.completer?.complete();
-      }
-    });
+  final AbstractCharacterRepository repository;
+
+  CharacterListBloc(this.repository) : super(CharacterListInitial()) {
+    on<LoadCharacterList>(_onLoadInitialCharacters);
+    on<LoadMoreCharacters>(_onLoadMoreCharacters);
   }
 
-  final AbstractCharacterRepository characterRepository;
+  Future<void> _onLoadInitialCharacters(
+    LoadCharacterList event,
+    Emitter<CharacterListState> emit,
+  ) async {
+    emit(CharacterListLoading());
 
-  @override
-  void onError(Object error, StackTrace stackTrace) {
-    super.onError(error, stackTrace);
-    GetIt.I<Talker>().handle(error, stackTrace);
+    try {
+      final characters = await repository.getCharacterList(page: 1);
+      emit(
+        CharacterListLoaded(
+          characters: characters,
+          currentPage: 1,
+          isLoadingMore: false,
+          hasNextPage: characters.isNotEmpty,
+        ),
+      );
+    } catch (e) {
+      emit(CharacterListError('Error loading characters: $e'));
+    }
+  }
+
+  Future<void> _onLoadMoreCharacters(
+    LoadMoreCharacters event,
+    Emitter<CharacterListState> emit,
+  ) async {
+    final currentState = state;
+    if (currentState is CharacterListLoaded &&
+        !currentState.isLoadingMore &&
+        currentState.hasNextPage) {
+      emit(currentState.copyWith(isLoadingMore: true));
+
+      try {
+        final nextPage = currentState.currentPage + 1;
+        final newCharacters = await repository.getCharacterList(page: nextPage);
+
+        emit(
+          currentState.copyWith(
+            characters: [...currentState.characters, ...newCharacters],
+            currentPage: nextPage,
+            isLoadingMore: false,
+            hasNextPage: newCharacters.isNotEmpty,
+          ),
+        );
+      } catch (e) {
+        emit(currentState.copyWith(isLoadingMore: false));
+      }
+    }
   }
 }
