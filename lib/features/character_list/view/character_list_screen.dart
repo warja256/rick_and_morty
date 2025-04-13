@@ -1,6 +1,5 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:rick_and_morty/features/character_list/widgets/character_card.dart';
 
 @RoutePage()
@@ -30,17 +29,14 @@ class _MyWidgetViewState extends State<_MyWidgetView> {
         ],
       ),
       body: RefreshIndicator(
-        child: Column(
-          children: [
-            Expanded(
-              child: ListView.builder(
-                itemBuilder: (context, index) {
-                  return CharacterCard();
-                },
-                itemCount: 10,
-              ),
-            ),
-          ],
+        child: ListView.builder(
+          itemBuilder: (context, index) {
+            return Padding(
+              padding: const EdgeInsets.all(10.0),
+              child: CharacterCard(),
+            );
+          },
+          itemCount: 10,
         ),
         onRefresh: () async {},
       ),
