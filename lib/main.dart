@@ -4,6 +4,11 @@ import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get_it/get_it.dart';
+import 'package:hive/hive.dart';
+import 'package:hive_flutter/hive_flutter.dart';
+import 'package:rick_and_morty/repositories/abstract_character_repository.dart';
+import 'package:rick_and_morty/repositories/character_repository.dart';
+import 'package:rick_and_morty/repositories/models/character.dart';
 import 'package:rick_and_morty/rick_and_morty_app.dart';
 import 'package:talker_bloc_logger/talker_bloc_logger_observer.dart';
 import 'package:talker_bloc_logger/talker_bloc_logger_settings.dart';
@@ -34,6 +39,15 @@ void main() {
     Bloc.observer = TalkerBlocObserver(
       talker: talker,
       settings: TalkerBlocLoggerSettings(printStateFullData: false),
+    );
+
+    await Hive.initFlutter();
+    Hive.registerAdapter(CharacterAdapter());
+
+    final characterNameBox = await Hive.openBox<Character>(rickAndMortyBoxName);
+
+    GetIt.I.registerLazySingleton<AbstractCharacterRepository>(
+      () => CharacterRepository(dio: dio, rickAndMortyBox: characterNameBox),
     );
 
     FlutterError.onError =
