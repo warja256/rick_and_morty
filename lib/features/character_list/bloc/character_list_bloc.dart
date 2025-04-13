@@ -1,14 +1,15 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:rick_and_morty/features/character_list/bloc/character_list_event.dart';
 import 'package:rick_and_morty/features/character_list/bloc/character_list_state.dart';
-import 'package:rick_and_morty/repositories/abstract_character_repository.dart';
 import 'package:rick_and_morty/repositories/character_repository.dart';
 import 'package:bloc/bloc.dart';
 
 class CharacterListBloc extends Bloc<CharacterListEvent, CharacterListState> {
-  final AbstractCharacterRepository repository;
+  final CharacterRepository repository;
 
-  CharacterListBloc(this.repository) : super(CharacterListInitial()) {
+  // Modify the constructor to take the concrete repository, not the abstract one
+  CharacterListBloc({required this.repository})
+    : super(CharacterListInitial()) {
     on<LoadCharacterList>(_onLoadInitialCharacters);
     on<LoadMoreCharacters>(_onLoadMoreCharacters);
   }

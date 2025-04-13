@@ -11,7 +11,6 @@ import 'package:rick_and_morty/features/character_list/widgets/character_card.da
 import 'package:rick_and_morty/features/favourite/bloc/favourite_bloc.dart';
 import 'package:rick_and_morty/features/favourite/bloc/favourite_event.dart';
 import 'package:rick_and_morty/features/favourite/bloc/favourite_state.dart';
-import 'package:rick_and_morty/repositories/abstract_character_repository.dart';
 import 'package:rick_and_morty/repositories/character_repository.dart';
 import 'package:rick_and_morty/repositories/models/character.dart';
 
@@ -24,7 +23,7 @@ class CharacterListScreen extends StatelessWidget {
     return BlocProvider(
       create:
           (context) =>
-              CharacterListBloc(GetIt.I<AbstractCharacterRepository>())
+              CharacterListBloc(repository: GetIt.I<CharacterRepository>())
                 ..add(LoadCharacterList()),
       child: _MyWidgetView(),
     );
@@ -129,7 +128,7 @@ class _MyWidgetViewState extends State<_MyWidgetView> {
             if (state is CharacterListError) {
               return _ErrorView(
                 retry: () {
-                  _characterListBloc.add(LoadCharacterList(completer: null));
+                  _characterListBloc.add(LoadCharacterList());
                 },
               );
             }
